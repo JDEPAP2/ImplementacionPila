@@ -12,8 +12,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import modelo.Pila;
-import static modelo.OperacionesPila.*;
 import datos.Productos;
+import static modelo.Tools.*;
+import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
@@ -25,50 +26,39 @@ public class FXMLDocumentController implements Initializable {
     
     Pila<Productos> pilaP;
     @FXML
-    private Label label;
+    private Label label, label1, label2, label3, label4;
+    
+    @FXML
+    private TextField textF, textF1, textF2;
     
     @FXML
     private WebView webView;
     WebEngine webEngine;
     
-    
-    public String organizar(Pila<Productos> laPila){
-        String res = "";
-        while(!laPila.estaVacia()){
-            Productos elemento = laPila.desapilar();
-            res  += "<tr>" + "<td>" + elemento.getNombre() + "<td>" + "<td>" + elemento.getCantidad() + "<td>" + "<td>" + elemento.getValor() + "<td>"  + "<td>"+ "</tr>";
-        }
-        return res;
-    }
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        Productos elemento = new Productos("Pitaya", 1, 20000);
-        pilaP.apilar(elemento);
-        Pila<Productos> pilaD = pilaDuplicada(pilaP);
-        String p = "<html>"+
-                        "<head>" +
-                            "<title> a </title>" +
-                            "<meta charset='UTF-8'>" +
-                        "</head>" +
-                        "<table>" + 
-                            "<tr>" +
-                                "<td>" + "Nombre" + "<td>"+
-                                "<td>" + "Cantidad" + "<td>"+
-                                "<td>" + "Precio" + "<td>"+ "</tr>"+
-                                organizar(pilaD) +
-                        "</table>"+
-                    "</html>";
-        
-        webEngine.loadContent(p);
-        
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
+        try{
+            String nombre = textF.getText();
+            int cantidad = Integer.parseInt(textF1.getText());
+            double valor = Double.parseDouble(textF2.getText());
+            Productos elemento = new Productos(nombre, cantidad, valor);
+            pilaP.apilar(elemento);
+            webEngine.loadContent(crearHTML(pilaP));
+            label4.setText(""); 
+            textF.setText("");
+            textF1.setText("");
+            textF2.setText("");
+        }catch (Exception e){
+            label4.setText("Error en los datos numericos");
+        }
+                
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         pilaP = new Pila<>();
         webEngine = webView.getEngine();
+        webView.zoomProperty().set(0.5);
     }    
     
 }
